@@ -80,5 +80,5 @@ for i in c_choisis:
 
     print(utils) # Affiche l'utilité totale des objets choisis pour la capacité de sac i
     print(values) # Affiche les objets choisis pour la capacité de sac i
-    print(compteur_operation)
-    print(time_tot)
+    print("opération effectué :", compteur_operation)
+    print("temps total utilisé:", time_tot)
