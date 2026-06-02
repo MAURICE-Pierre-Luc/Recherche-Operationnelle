@@ -13,7 +13,7 @@ for k in range(0, x):
     tot_combinaison += k_parmis_n
     # print("Pour", k, "objet dans le sac il existe", k_parmis_n, "combinaisons possible.")
 
-print("Nombre total de combinaisons possibles :", tot_combinaison*2) # on multiplie par 2 pour prendre en compte les combinaisons de 12 à 23 objets, qui sont les mêmes que celles de 0 à 11 objets.
+#print("Nombre total de combinaisons possibles :", tot_combinaison*2) # on multiplie par 2 pour prendre en compte les combinaisons de 12 à 23 objets, qui sont les mêmes que celles de 0 à 11 objets.
 # print("fin des tests.\n")
 
 #for k in range(0, n+1):
@@ -78,7 +78,8 @@ for i in c_choisis:
     print("Pour une capacité de", i, "kg, les objets suivants sont choisis :")
     utils, compteur_operation, time_tot, values = algorithme_A(poid, n, i)
 
-    print(utils) # Affiche l'utilité totale des objets choisis pour la capacité de sac i
-    print(values) # Affiche les objets choisis pour la capacité de sac i
-    print("opération effectué :", compteur_operation)
-    print("temps total utilisé:", time_tot)
+    print(f'Utilite: {utils}')# Affiche l'utilité totale des objets choisis pour la capacité de sac i
+    print(f'Nom des objets a prendre: {values}') # Affiche les objets choisis pour la capacité de sac i
+    print(f'Nombre d\'opérations effectuees : {compteur_operation}')
+    print(f'Temps ecoule: {time_tot}')
+
