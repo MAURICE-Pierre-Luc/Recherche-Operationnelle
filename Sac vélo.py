@@ -62,9 +62,9 @@ def algorithme_A(poid, n, c_choisis):
 
     for i in range(0, len(poid), 1):
         for j in range(0, n[i], 1):
+            compteur_operation += 2
             if c_choisis - poid[i] >= 0:
-                compteur_operation += 2
-                c_choisis -= poid[i]
+                c_choisis = round(c_choisis - poid[i], 2)
                 compteur_operation += 1
                 e.append(poid[i])
             else:
@@ -74,37 +74,36 @@ def algorithme_A(poid, n, c_choisis):
             break
 
 
-    
     values = []
-    print(e)
+    utils = []
     for i in range(0, len(e), 1):
-        keys = []
 #Liste en comprehension
 #        keys = [k2 for (k1, k2) in dico.keys() if k1 == e[i]]
         for (k1, k2), nom in dico.items():
             compteur_operation += 1
             if k1 == e[i]:
-            # if nom not in values:
-                keys.append(k2)
-                # values.append(nom)
-
-        keys.sort(reverse=True)
-        utils.append(keys[0])
-        print("utils:", utils)
-        print("keys:", keys)
-        print("values:", values)
+                if nom not in values:
+                    utils.append(k2)
+                    values.append(nom)
+                    break
+    
+    # print("utils:", utils)
+    # print("keys:", keys)
+    # print("values:", values)
     time2 = time()
     time_tot = time2 - time1
-    
-    return utils, compteur_operation, time_tot
+
+    return utils, compteur_operation, time_tot, values
+
 
 c_possible = [0.01, 6.81] #Limite de poid min et max
-c_choisis = [2, 3, 4, 5]
+c_choisis = [5]
 
 for i in c_choisis:
     print("Pour une capacité de", i, "kg, les objets suivants sont choisis :")
-    utils, compteur_operation, time_tot = algorithme_A(poid, n, i)
+    utils, compteur_operation, time_tot, values = algorithme_A(poid, n, i)
 
     print(utils)
     print(compteur_operation)
     print(time_tot)
+    print(values)
