@@ -15,7 +15,7 @@ from Objets_Velo import objets_velo as dico
 
 C=0.6
 
-dict(sorted(dico.items(), key=lambda item: item[1][2], reverse=True))
+dico = dict(sorted(dico.items(), key=lambda item: item[1][2], reverse=True))
 print (dico)
 
 m_tot = 0
@@ -26,7 +26,10 @@ for key,(a,b,c) in dico.items():
         sac[key]=[a,b,c]
         m_tot= m_tot + a
         util_tot= util_tot + b
-print(sac, m_tot, util_tot)
+
+print(f'Sac : {sac}')
+print(f'Masse totale du sac : {m_tot}')
+print(f'Utilite totale: {util_tot}')
 
 
 
