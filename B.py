@@ -3,11 +3,11 @@ from Objets_Velo import objets_velo
 
 C=2
 
-
+t_start = time()
 
 dico = dict(sorted(objets_velo.items(), key=lambda item: item[1][2], reverse=True))
 print (dico)
-t_start = time()
+
 
 m_tot,util_tot = 0, 0
 sac={}
