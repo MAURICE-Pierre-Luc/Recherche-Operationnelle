@@ -1,0 +1,30 @@
+list_obj = ['Pompe','Démonte-Pneus',
+            'Gourde','Chambre à air',
+            'Clé de 15','Multi-tool',
+            'Pince multiprise','Couteau suisse',
+            'Compresses','Désinfectant',
+            'Veste de pluie','Pantalon de pluie',
+            'Crème solaire','Carte IGN',
+            'batterie portable','Téléphone portable',
+            'Lampes','Arrache Manivelle',
+            'Bouchon de valve chromé bleu','Maillon rapide',
+            'Barre de céréales','Fruits',
+            'Rustines']
+
+from Objets_Velo import objets_velo as dico
+
+C=0.6
+
+dict(sorted(dico.items(), key=lambda item: item[2], reverse=True))
+print (dico)
+
+m_tot = 0
+util_tot = 0
+for key,(a,b,c) in dico.items():
+    if m_tot + a <= C :
+        sac = dict(dico, "nom", (a,b,c))
+        m_tot= m_tot + a
+        util_tot= util_tot + b
+print(sac, m_tot, util_tot)
+
+
