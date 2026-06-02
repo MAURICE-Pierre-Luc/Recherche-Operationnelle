@@ -1,6 +1,6 @@
 from math import factorial
 from time import time
-
+from Objets_Velo import objets_velo
 n = 23
 
 # comme les résultats sont paralèlles, la combinaison est la meme pour 1 et 23, 2 et 22 etc.
@@ -24,33 +24,6 @@ print("fin des tests.")
 
 poid = [1, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01] #unique
 n = [1, 1, 1, 7, 1, 6, 3, 2, 1]  # nombre d'objet ayant le poid du meme indice dans poids
-
-
-dico = {
-    (1, 2): "Gourde",
-    (0.6, 1.3): "Fruit",
-    (0.5, 0.4): "Batterie portable",
-    (0.4, 0): "Arrache manivelle",
-    (0.4, 0.75): "Pantallon de pluie",
-    (0.4, 0.8): "Barre de céréale",
-    (0.4, 0.8): "Pince multiprise",
-    (0.4, 1): "Veste de pluie",
-    (0.4, 1.75): "Crème solaire",
-    (0.4, 2): "Téléphone mobile",
-    (0.3, 1.8): "Lampes",
-    (0.2, 0.5): "Chambre à air",
-    (0.2, 0.6): "Désinfectant",
-    (0.2, 1): "Clé de 15",
-    (0.2, 1.5): "Couteau suisse",
-    (0.2, 1.5): "Pompe",
-    (0.2, 1.7): "Multi-tool",
-    (0.1, 0.2): "Carte IGN",
-    (0.1, 0.4): "Compresses",
-    (0.1, 1.5): "Démonte-pneus",
-    (0.05, 1.4): "Maillon rapide",
-    (0.05, 1.5): "Rustines",
-    (0.01, 0.1): "Bouchon de valve chromé bleu",
-}
 
 
 def algorithme_A(poid, n, c_choisis):
@@ -79,7 +52,7 @@ def algorithme_A(poid, n, c_choisis):
     for i in range(0, len(e), 1):
 #Liste en comprehension
 #        keys = [k2 for (k1, k2) in dico.keys() if k1 == e[i]]
-        for (k1, k2), nom in dico.items():
+        for nom, (k1, k2, k3) in objets_velo.items():
             compteur_operation += 1
             if k1 == e[i]:
                 if nom not in values:

@@ -1,4 +1,4 @@
-dico = {
+objets_velo = {
     "Gourde": (1, 2, 2),
     "Fruit": (0.6, 1.3, 2.17),
     "Batterie portable":(0.5, 0.4, 0.8),
