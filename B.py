@@ -1,16 +1,3 @@
-list_obj = ['Pompe','Démonte-Pneus',
-            'Gourde','Chambre à air',
-            'Clé de 15','Multi-tool',
-            'Pince multiprise','Couteau suisse',
-            'Compresses','Désinfectant',
-            'Veste de pluie','Pantalon de pluie',
-            'Crème solaire','Carte IGN',
-            'batterie portable','Téléphone portable',
-            'Lampes','Arrache Manivelle',
-            'Bouchon de valve chromé bleu','Maillon rapide',
-            'Barre de céréales','Fruits',
-            'Rustines']
-
 from Objets_Velo import objets_velo as dico
 
 C=0.6
