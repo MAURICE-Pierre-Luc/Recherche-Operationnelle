@@ -1,10 +1,6 @@
-<<<<<<< Updated upstream
 from time import time; from Objets_Velo import objets_velo
 
 C=5
-=======
-from Objets_Velo import objets_velo as dico
->>>>>>> Stashed changes
 
 
 dico = dict(sorted(objets_velo.items(), key=lambda item: item[1][2], reverse=True))
