@@ -1,5 +1,5 @@
 from time import time
-from Objets_Velo import objets_velo
+from Partie1.Objets_Velo import objets_velo
 
 
 poid = [1000, 600, 500, 400, 300, 200, 100, 50, 10] #unique (on ne répète pas les poids)
