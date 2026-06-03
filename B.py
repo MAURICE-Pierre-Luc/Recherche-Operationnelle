@@ -1,10 +1,13 @@
 from time import time; from Objets_Velo import objets_velo
 
 C=5
+=======
+from Objets_Velo import objets_velo as dico
+>>>>>>> Stashed changes
 
 
 dico = dict(sorted(objets_velo.items(), key=lambda item: item[1][2], reverse=True))
-print (dico)
+
 t_start = time()
 
 m_tot = 0
@@ -17,6 +20,6 @@ for key,(a,b,c) in dico.items():
 t_fin = time()
 
 print(f'Sac : {sac}')
-print(f'Masse totale du sac : {m_tot}')
-print(f'Utilite totale: {util_tot}')
+print(f'Masse totale du sac : {m_tot/1000}')
+print(f'Utilite totale: {util_tot/100}')
 print(f'temps d\'execution : {t_fin-t_start}')
