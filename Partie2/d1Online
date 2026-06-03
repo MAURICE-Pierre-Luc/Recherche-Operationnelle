@@ -1,0 +1,38 @@
+longueur_wagon = 11.583
+print(round(longueur_wagon, 0))
+nombre_wagons = 0
+
+longueur_objets = [10,9,7.5,1,2,11,3,3,3,4,5,6,7,5,6,5,4,7,9,3,5,6,7,3,1,2,4,6,7,9,6,3,3,4,5,6,6,7,6,7,8,8,8,5,2.2,4.2,3.7,5.6,4.9,8.7,6.1,3.3,2.6,2.9,2,3,6,5,4,6,4,2,4,6,6,3,4,4,2,6,2,4,5,5,4,6,3,3,3,5,5,6,5,3,5,6,6,3,5,3,4,3,3,5,3,4,4,2,2,6]
+i = -1
+
+reste = 0
+
+while longueur_objets != []: # tant qu'il reste des objets à charger dans les wagons (c'est à dire tant que la liste des longueurs des objets n'est pas composée uniquement de 0, ce qui signifie que tous les objets ont été chargés dans les wagons)
+    i += 1
+    if i == len(longueur_objets): # si on a parcouru toute la liste des longueurs des objets, on recommence à parcourir la liste depuis le début pour pouvoir ajouter les objets restants dans le wagon suivant
+        i = 0
+        nombre_wagons += 1
+        print(f'Wagon {nombre_wagons} : {longueur_wagon}')
+        reste += round(longueur_wagon, 3)
+        longueur_wagon = 11.583 # on remet la capacité du wagon à son maximum pour pouvoir continuer à ajouter des objets dans le wagon suivant
+        
+
+    if longueur_wagon - longueur_objets[i] >= 0: # si la capacité du wagon est suffisante pour accepter l'objet de longueur longueur_objets[i], on l'ajoute au wagon
+        longueur_wagon = round(longueur_wagon - longueur_objets[i], 3)
+        del longueur_objets[i] # on met la longueur de l'objet à 0 pour indiquer qu'il a été chargé dans le wagon, et pour éviter de le charger à nouveau dans le wagon suivant
+        print(len(longueur_objets))
+
+    if longueur_wagon < 1: # si la capacité du wagon n'est pas assé grande pour accepter un autre objet, on peut arrêter l'algorithme
+        nombre_wagons += 1
+        print(f'Wagon {nombre_wagons} : {longueur_wagon}')
+        reste += round(longueur_wagon, 3)
+        
+        longueur_wagon = 11.583 # on remet la capacité du wagon à son maximum pour pouvoir continuer à ajouter des objets dans le wagon suivant
+        i = -1 # on remet l'indice à -1 pour pouvoir recommencer à parcourir la liste des longueurs des objets depuis le début pour pouvoir ajouter les objets restants dans le wagon suivant
+
+
+print(f'Nombre de wagons nécessaires : {nombre_wagons}')
+print(f'Longueur totale de la place non utilisée des wagons : {reste}')
+print(longueur_objets)
+
+print(nombre_wagons * 11.583 - reste) # longueur totale des objets chargés dans les wagons, pour vérifier que c'est égal à la somme des longueurs des objets (car tous les objets doivent être chargés dans les wagons)
