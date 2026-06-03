@@ -6,17 +6,15 @@ inventaire = lire_inventaire("DonnesMarchandise.csv")
 
 print(inventaire)
 longueur_wagon = 11.583
-largeur_wagon = 2.294
-hauteur_wagon = 2.569
-contenere = 0
+conteneur = 0
 nombre_wagons = 1
 
 for i in range(0, len(inventaire),1) :
-    if contenere + inventaire[i]["Longueur"] <= longueur_wagon :
-        contenere = contenere + inventaire[i]["Longueur"]
+    if conteneur + inventaire[i]["Longueur"] <= longueur_wagon :
+        conteneur = conteneur + inventaire[i]["Longueur"]
     else :
         nombre_wagons+=1
-        contenere = 0 + inventaire[i]["Longueur"]
+        contenere = inventaire[i]["Longueur"]
 
 time2 = time()
 print("Nombre de wagons :", nombre_wagons)
