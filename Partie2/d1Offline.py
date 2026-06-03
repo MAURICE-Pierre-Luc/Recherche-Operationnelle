@@ -2,7 +2,7 @@ from Read_csv import lire_inventaire
 from time import time
 
 time1 = time()
-inventaire = lire_inventaire("DonnesMarchandise.csv")
+inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
 
 print(inventaire)
 longueur_wagon = 11.583
