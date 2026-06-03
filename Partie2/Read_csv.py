@@ -7,21 +7,23 @@ def lire_inventaire(chemin_csv: str) -> list[dict]:
     df.columns = [col.strip() for col in df.columns]
     df = df.rename(columns={"Numéro": "id"})
 
-    # Typage explicite
+    # Passage en int via cm (évite les floats)
     df["id"] = df["id"].astype(int)
     df["Désignation"] = df["Désignation"].astype(str).str.strip()
-    df["Longueur"] = df["Longueur"].astype(float)
-    df["Largeur"] = df["Largeur"].astype(float)
-    df["Hauteur"] = df["Hauteur"].astype(float)
 
-    # Colonnes dérivées
-    df["Surface_m2"] = (df["Longueur"] * df["Largeur"]).round(4)
-    df["Volume_m3"] = (df["Longueur"] * df["Largeur"] * df["Hauteur"]).round(4)
+    # Conversion mètres -> milimètres (int)
+    df["Longueur"] = (df["Longueur"].astype(float) * 1000).round().astype(int)
+    df["Largeur"] = (df["Largeur"].astype(float) * 1000).round().astype(int)
+    df["Hauteur"] = (df["Hauteur"].astype(float) * 1000).round().astype(int)
+
+    # Calculs en mm² et mm³ (entiers)
+    df["Surface_mm2"] = df["Longueur"] * df["Largeur"]
+    df["Volume_mm3"] = df["Longueur"] * df["Largeur"] * df["Hauteur"]
 
     return df.to_dict(orient="records")
 
 
 if __name__ == "__main__":
-    inventaire = lire_inventaire("DonnesMarchandise.csv")
+    inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
     for article in inventaire:
         print(article)

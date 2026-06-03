@@ -2,11 +2,11 @@ from Read_csv import lire_inventaire
 from time import time
 
 # Dimensions du conteneur
-CONTENEUR_L = 11.583
-CONTENEUR_l = 2.294
+CONTENEUR_L = 11583
+CONTENEUR_l = 2294
 
 # Seuil minimal pour garder un espace libre
-SEUIL = 0.01
+SEUIL = 10
 
 
 def choisir_sens_coupe(espace, marchandise, restantes):
@@ -128,7 +128,7 @@ def verifier(inventaire, affectation):
 
 t_start = time()
 
-inventaire = lire_inventaire("DonnesMarchandise.csv")
+inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
 nb_wagons, affectation = bin_packing_d2_online(inventaire)
 
 t_fin = time() 
@@ -144,7 +144,7 @@ verifier(inventaire, affectation)
 print("\nDétail par conteneur :")
 taux_total = 0
 for c, ids in enumerate(affectation):
-    surface_utilisee = sum(index[id]["Surface_m2"] for id in ids)
+    surface_utilisee = sum(index[id]["Surface_mm2"] for id in ids)
     taux = surface_utilisee / surface_conteneur * 100
     taux_total += taux
     print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")

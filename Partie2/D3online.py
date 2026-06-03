@@ -3,9 +3,9 @@ from itertools import permutations
 from time import time
 
 # Dimensions du conteneur
-CONTENEUR_L = 11.583
-CONTENEUR_l = 2.294
-CONTENEUR_h = 2.569
+CONTENEUR_L = 11583
+CONTENEUR_l = 2294
+CONTENEUR_h = 2569
 
 # Seuil minimal pour garder un espace libre
 SEUIL = 0.01
@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
     t_start = time()
 
-    inventaire = lire_inventaire("DonnesMarchandise.csv")
+    inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
     nb_wagons, affectation = bin_packing_d3_offline(inventaire)
 
     t_fin = time()
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     print("\nDétail par conteneur :")
     taux_total = 0
     for c, ids in enumerate(affectation):
-        volume_utilise = sum(index[id]["Volume_m3"] for id in ids)
+        volume_utilise = sum(index[id]["Volume_mm3"] for id in ids)
         taux = volume_utilise / volume_conteneur * 100
         taux_total += taux
         print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
