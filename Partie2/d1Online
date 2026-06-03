@@ -3,6 +3,23 @@ print(round(longueur_wagon, 0))
 nombre_wagons = 0
 
 longueur_objets = [10,9,7.5,1,2,11,3,3,3,4,5,6,7,5,6,5,4,7,9,3,5,6,7,3,1,2,4,6,7,9,6,3,3,4,5,6,6,7,6,7,8,8,8,5,2.2,4.2,3.7,5.6,4.9,8.7,6.1,3.3,2.6,2.9,2,3,6,5,4,6,4,2,4,6,6,3,4,4,2,6,2,4,5,5,4,6,3,3,3,5,5,6,5,3,5,6,6,3,5,3,4,3,3,5,3,4,4,2,2,6]
+
+
+for i in range(0, len(longueur_objets),1) :
+    if longueur_wagon - longueur_objets[i] >= 0:
+        longueur_wagon -= longueur_objets[i]
+    else :
+        nombre_wagons+=1
+        longueur_wagon = 11.583
+
+print("Nombre de wagons :", nombre_wagons)
+
+longueur_wagon = 11.583
+nombre_wagons = 0
+
+
+
+#longueur_objets.sort(reverse=True) # on trie la liste des longueurs des objets dans l'ordre décroissant pour pouvoir ajouter les objets les plus longs en premier dans les wagons, ce qui permet de minimiser le nombre de wagons nécessaires pour charger tous les objets (car les objets les plus longs prennent plus de place que les objets plus courts, donc en les ajoutant en premier, on peut remplir les wagons de manière plus efficace)
 i = -1
 
 reste = 0
