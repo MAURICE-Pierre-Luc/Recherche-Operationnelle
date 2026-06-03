@@ -5,7 +5,7 @@ time1 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le
 inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
 
 # Capacité wagon en millimètres (constante entière)
-longueur_wagon = 11.583*1000 # on convertit la longueur du wagon en millimètres pour pouvoir travailler avec des entiers et éviter les problèmes de précision liés aux nombres à virgule flottante, ce qui peut rendre l'algorithme plus rapide et plus fiable (car les opérations sur les entiers sont généralement plus rapides que les opérations sur les nombres à virgule flottante, et les problèmes de précision peuvent entraîner des erreurs dans le calcul de la capacité restante du wagon, ce qui peut conduire à des décisions incorrectes sur l'ajout d'objets dans le wagon)
+longueur_wagon = 11583 # on convertit la longueur du wagon en millimètres pour pouvoir travailler avec des entiers et éviter les problèmes de précision liés aux nombres à virgule flottante, ce qui peut rendre l'algorithme plus rapide et plus fiable (car les opérations sur les entiers sont généralement plus rapides que les opérations sur les nombres à virgule flottante, et les problèmes de précision peuvent entraîner des erreurs dans le calcul de la capacité restante du wagon, ce qui peut conduire à des décisions incorrectes sur l'ajout d'objets dans le wagon)
 nombre_wagons = 0
 reste = 0
 
