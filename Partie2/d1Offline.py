@@ -11,10 +11,13 @@ l_contenere = 2.294
 h_contenere = 2.569
 contenere = 0
 nbr_wagons = 1
+
 for i in range(0, len(tri),1) :
     if contenere + tri[i] <= L_contenere :
         contenere= contenere + tri[i]
     else :
         nbr_wagons+=1
         contenere=0
-print("Nombre de wagons", nbr_wagons)
+
+
+print("Nombre de wagons :", nbr_wagons)

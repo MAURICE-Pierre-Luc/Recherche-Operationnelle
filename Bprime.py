@@ -6,7 +6,7 @@ poid = [1000, 600, 500, 400, 300, 200, 100, 50, 10] #unique (on ne répète pas 
 n_poids = [1, 1, 1, 7, 1, 6, 3, 2, 1]  # nombre d'objet ayant le poid du meme indice dans poids
 
 
-def B_prime(poid, c_choisis): #Algorithme glouton qui choisit les objets les plus lourds en premier, ne choisis pas les objets en fonction de leur utilité
+def algorithme_A(poid, n, c_choisis): #Algorithme glouton qui choisit les objets les plus lourds en premier, ne choisis pas les objets en fonction de leur utilité
     
     time1 = time() # On lance le chronomètre pour mesurer le temps d'exécution de l'algorithme
 
@@ -50,10 +50,12 @@ def B_prime(poid, c_choisis): #Algorithme glouton qui choisit les objets les plu
 
 c_choisis = [2000, 3000, 4000, 5000] # On choisit des capacités de sac différentes pour tester l'algorithme, en prenant des valeurs entre la limite de poid min et max
 
-for n in c_choisis:
-    print("Pour une capacité de", n/1000, "kg, les objets suivants sont choisis :")
-    utils, time_tot, values = B_prime(poid, n)
-    print(f'Utilite: {utils}')
-    print(f'Nom des objets a prendre: {values}')
+for i in c_choisis:
+    print("Pour une capacité de", i, "kg, les objets suivants sont choisis :")
+    utils, compteur_operation, time_tot, values = algorithme_A(poid, n, i)
+
+    print(f'Utilite: {utils}')# Affiche l'utilité totale des objets choisis pour la capacité de sac i
+    print(f'Nom des objets a prendre: {values}') # Affiche les objets choisis pour la capacité de sac i
+    print(f'Nombre d\'opérations effectuees : {compteur_operation}')
     print(f'Temps ecoule: {time_tot}')
 
