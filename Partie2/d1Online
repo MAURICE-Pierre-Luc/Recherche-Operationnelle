@@ -1,30 +1,18 @@
+from Read_csv import lire_inventaire
 from time import time
-longueur_wagon = 11.583
-print(round(longueur_wagon, 0))
-nombre_wagons = 0
 
-longueur_objets = [10,9,7.5,1,2,11,3,3,3,4,5,6,7,5,6,5,4,7,9,3,5,6,7,3,1,2,4,6,7,9,6,3,3,4,5,6,6,7,6,7,8,8,8,5,2.2,4.2,3.7,5.6,4.9,8.7,6.1,3.3,2.6,2.9,2,3,6,5,4,6,4,2,4,6,6,3,4,4,2,6,2,4,5,5,4,6,3,3,3,5,5,6,5,3,5,6,6,3,5,3,4,3,3,5,3,4,4,2,2,6]
+time1 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le comparer avec d'autres algorithmes qui pourraient être plus efficaces pour résoudre ce problème, et pour pouvoir évaluer la performance de l'algorithme en fonction de la taille de la liste des longueurs des objets (car plus la liste est grande, plus l'algorithme peut être long à exécuter, donc il est important de mesurer le temps d'exécution pour pouvoir évaluer la performance de l'algorithme)
+inventaire = lire_inventaire("DonnesMarchandise.csv")
 
-
-for i in range(0, len(longueur_objets),1) :
-    if longueur_wagon - longueur_objets[i] >= 0:
-        longueur_wagon -= longueur_objets[i]
-    else :
-        nombre_wagons+=1
-        longueur_wagon = 11.583
-
-print("Nombre de wagons :", nombre_wagons)
 
 longueur_wagon = 11.583
 nombre_wagons = 0
-
+longueur_objets = [m["Longueur"] for m in inventaire] # on crée une liste des longueurs des objets à charger dans les wagons, en extrayant la valeur de la clé "Longueur" de chaque dictionnaire représentant un objet dans l'inventaire, pour pouvoir trier cette liste et charger les objets les plus longs en premier dans les wagons, ce qui permet de minimiser le nombre de wagons nécessaires pour charger tous les objets (car les objets les plus longs prennent plus de place que les objets plus courts, donc en les ajoutant en premier, on peut remplir les wagons de manière plus efficace)
 
 
 #longueur_objets.sort(reverse=True) # on trie la liste des longueurs des objets dans l'ordre décroissant pour pouvoir ajouter les objets les plus longs en premier dans les wagons, ce qui permet de minimiser le nombre de wagons nécessaires pour charger tous les objets (car les objets les plus longs prennent plus de place que les objets plus courts, donc en les ajoutant en premier, on peut remplir les wagons de manière plus efficace)
 i = -1
 reste = 0
-
-time1 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le comparer avec d'autres algorithmes qui pourraient être plus efficaces pour résoudre ce problème, et pour pouvoir évaluer la performance de l'algorithme en fonction de la taille de la liste des longueurs des objets (car plus la liste est grande, plus l'algorithme peut être long à exécuter, donc il est important de mesurer le temps d'exécution pour pouvoir évaluer la performance de l'algorithme)
 
 while longueur_objets != []: # tant qu'il reste des objets à charger dans les wagons (c'est à dire tant que la liste des longueurs des objets n'est pas composée uniquement de 0, ce qui signifie que tous les objets ont été chargés dans les wagons)
     i += 1
@@ -39,7 +27,6 @@ while longueur_objets != []: # tant qu'il reste des objets à charger dans les w
     if longueur_wagon - longueur_objets[i] >= 0: # si la capacité du wagon est suffisante pour accepter l'objet de longueur longueur_objets[i], on l'ajoute au wagon
         longueur_wagon = round(longueur_wagon - longueur_objets[i], 3)
         del longueur_objets[i] # on met la longueur de l'objet à 0 pour indiquer qu'il a été chargé dans le wagon, et pour éviter de le charger à nouveau dans le wagon suivant
-        print(len(longueur_objets))
 
     if longueur_wagon < 1: # si la capacité du wagon n'est pas assé grande pour accepter un autre objet, on peut arrêter l'algorithme
         nombre_wagons += 1
