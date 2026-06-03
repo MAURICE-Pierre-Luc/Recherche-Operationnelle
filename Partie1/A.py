@@ -1,6 +1,6 @@
 from time import time
 
-from Objets_Velo import objets_velo
+from Partie1.Objets_Velo import objets_velo
 
 
 def solve(objets_velo, target_kg):
