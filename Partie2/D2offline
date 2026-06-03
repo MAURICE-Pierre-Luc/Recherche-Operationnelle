@@ -26,13 +26,25 @@ def choisir_sens_coupe(espace, marchandise, restantes):
     r2_v = (x, y + mla, l, la - mla)
 
     def score(espaces):
-        return sum(
-            1 for m in restantes
-            if any(
-                e[2] >= m["Longueur"] and e[3] >= m["Largeur"]
-                for e in espaces if e[2] > SEUIL and e[3] > SEUIL
-            )
-        )
+        # Compte combien de marchandises restantes peuvent tenir dans
+        # au moins un des espaces fournis. Évite l'utilisation de any
+        # pour rendre la logique explicite et plus lisible.
+        compte = 0
+        for m in restantes:
+            longueur_m = m["Longueur"]
+            largeur_m = m["Largeur"]
+            peut_tenir = False
+            for e in espaces:
+                l_e, la_e = e[2], e[3]
+                # Ignore les petits fragments non exploitables
+                if l_e <= SEUIL or la_e <= SEUIL:
+                    continue
+                if l_e >= longueur_m and la_e >= largeur_m:
+                    peut_tenir = True
+                    break
+            if peut_tenir:
+                compte += 1
+        return compte
 
     if score([r1_h, r2_h]) >= score([r1_v, r2_v]):
         return [r1_h, r2_h], "horizontal"
@@ -81,10 +93,10 @@ def remplir_conteneur(espaces, restantes, placees):
         x, y, l, la, _ = espace
         nouveaux, sens = choisir_sens_coupe((x, y, l, la), marchandise, restantes)
 
-        nouveaux_avec_sens = [
-            (e[0], e[1], e[2], e[3], sens)
-            for e in nouveaux if e[2] > SEUIL and e[3] > SEUIL
-        ]
+        nouveaux_avec_sens = []
+        for e in nouveaux:
+            if e[2] > SEUIL and e[3] > SEUIL:
+                nouveaux_avec_sens.append((e[0], e[1], e[2], e[3], sens))
 
         espaces = espaces[:i] + nouveaux_avec_sens + espaces[i+1:]
         restantes.remove(marchandise)
@@ -152,31 +164,32 @@ def verifier(inventaire, affectation):
     if doublons:
         print(f"Marchandises placées en double : {set(doublons)}")
     if not manquants and not doublons:
-        print(f"✓  Toutes les {len(ids_inventaire)} marchandises sont placées exactement une fois.")
+        print(f"Toutes les {len(ids_inventaire)} marchandises sont placées exactement une fois.")
 
 
-if __name__ == "__main__":
 
-    t_start = time()
-    inventaire = lire_inventaire("DonnesMarchandise.csv")
-    nb_wagons, affectation = bin_packing_d2_offline(inventaire)
+t_start = time()
 
-    # Index pour retrouver les dimensions d'une marchandise par son id
-    index = {m["id"]: m for m in inventaire}
-    surface_conteneur = CONTENEUR_L * CONTENEUR_l
+inventaire = lire_inventaire("DonnesMarchandise.csv")
+nb_wagons, affectation = bin_packing_d2_offline(inventaire)
 
-    print(f"Nombre de wagons nécessaires (d=2, offline) : {nb_wagons}")
-    verifier(inventaire, affectation)
+t_fin = time()
 
-    t_fin = time()
+# Index pour retrouver les dimensions d'une marchandise par son id
+index = {m["id"]: m for m in inventaire}
+surface_conteneur = CONTENEUR_L * CONTENEUR_l
 
-    print("\nDétail par conteneur :")
-    taux_total = 0
-    for c, ids in enumerate(affectation):
-        surface_utilisee = sum(index[id]["Surface_m2"] for id in ids)
-        taux = surface_utilisee / surface_conteneur * 100
-        taux_total += taux
-        print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
+print(f"Nombre de wagons nécessaires (d=2, offline) : {nb_wagons}")
+verifier(inventaire, affectation)
 
-    print(f"\nTaux de remplissage moyen : {taux_total / nb_wagons:.1f}%")
-    print(f'Temps total d\'execution: {t_fin - t_start}')
+
+print("\nDétail par conteneur :")
+taux_total = 0
+for c, ids in enumerate(affectation):
+    surface_utilisee = sum(index[id]["Surface_m2"] for id in ids)
+    taux = surface_utilisee / surface_conteneur * 100
+    taux_total += taux
+    print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
+
+print(f"\nTaux de remplissage moyen : {taux_total / nb_wagons:.1f}%")
+print(f'Temps total d\'execution: {t_fin - t_start}')
