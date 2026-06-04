@@ -16,18 +16,16 @@ def Algo_A(objets_velo, target_kg):
 
     Args:
         objets_velo (dict): dictionnaire où chaque clé est le nom d'un objet, et la valeur est un tuple :
-                            (poids, utilité, autre_information).
+                            (poids, utilité, ratio utilité/poid).
         target_kg (int | float): capacité maximale du sac (ici le vélo) en kilogrammes.
 
     Returns:
         tuple: (meilleure_utilité, meilleur_poids_en_kg, liste_des_objets_choisis)
     """
 
-    # On transforme le dictionnaire en liste pour accéder facilement aux éléments par index
-    items = list(objets_velo.items())
+    items = list(objets_velo.items()) # On transforme le dictionnaire en liste pour accéder facilement aux éléments par index
 
-    # Nombre total d'objets disponibles
-    n = len(items)
+    n = len(items) # Nombre total d'objets disponibles
 
     target_kg *= 1000 # On multiplie par 1000 pour éviter les erreurs sur les flotants
 
@@ -49,7 +47,7 @@ def Algo_A(objets_velo, target_kg):
 
         Args:
             i (int): index de l'objet actuellement considéré
-            remaining (int): poids restant disponible (en grammes)
+            remaining (int): poids restant disponible
             current_utility (int): utilité cumulée de la solution en cours
             current_weight (int): poids cumulée de la solution en cours
             current_solution (list): liste des objets actuellement sélectionnés
@@ -91,11 +89,11 @@ def Algo_A(objets_velo, target_kg):
 
     # Lancement de la recherche avec :
     # - tous les objets disponibles
-    # - poids converti en grammes pour éviter les flottants imprécis
+    # - poids converti pour éviter les flottants imprécis
     dfs(0, target_kg, 0, 0, [])
 
     # On retourne la meilleure solution trouvée
-    return best_utility/100, best_weight / 1000, best_solution
+    return best_utility/100, best_weight/1000, best_solution
 
 
 poids = [2,3,4,5]
@@ -104,21 +102,16 @@ for poid in poids:
 
     print("Pour une capacité de", poid, "kg, les objets suivants sont choisis :")
     
-    t_start = time()  # début du chronomètre
-    best_utility, best_weight, best_solution = Algo_A(objets_velo, poid) # exécution de l'algorithme complet
-    t_fin = time()  # fin du chronomètre
+    t_start = time()
+    util_tot, m_tot, sac = Algo_A(objets_velo, poid) # exécution de l'algorithme complet
+    t_fin = time()
 
+    print(f'Sac : {sac}') # Liste des objets sélectionnés par l'algorithme glouton
 
-    print(f"Utilité : {best_utility}")
-    # On divise par 100 probablement pour revenir à une échelle lisible (ex: centi-unités -> unités)
+    print(f'Masse totale du sac : {m_tot}') # Poids final du sac en kg
 
-    print(f"Poids : {best_weight}kg")
-    # Poids final de la solution optimale
+    print(f'Utilite totale: {util_tot}') # Score total obtenu
 
-    print(f"Objets : {best_solution}")
-    # Liste des objets sélectionnés dans la meilleure solution
+    print(f'temps d\'execution : {t_fin-t_start}') # Temps nécessaire pour exécuter l'algorithme
 
-    print(f"Temps : {t_fin - t_start}s")
-    # Temps d'exécution pour évaluer la performance de l'algorithme
-
-    print()
+    print()  # Ligne vide pour séparer les résultats entre chaque test
