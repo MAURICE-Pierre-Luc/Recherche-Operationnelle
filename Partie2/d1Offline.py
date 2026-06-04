@@ -1,41 +1,173 @@
 from Read_csv import lire_inventaire
 from time import time
 
-time1 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le comparer avec d'autres algorithmes qui pourraient être plus efficaces pour résoudre ce problème, et pour pouvoir évaluer la performance de l'algorithme en fonction de la taille de la liste des longueurs des objets (car plus la liste est grande, plus l'algorithme peut être long à exécuter, donc il est important de mesurer le temps d'exécution pour pouvoir évaluer la performance de l'algorithme)
+# Dimensions du conteneur
+# Ici on simplifie fortement le problème : on passe en 1D (linéaire).
+# Le conteneur est donc vu comme une "capacité de longueur" uniquement.
+CONTENEUR_L = 11583
+
+
+def bin_packing_d1_offline(inventaire):
+    """
+    Algorithme de bin packing 1D offline (First Fit Decreasing).
+
+    Principe général :
+    -------------------
+    On dispose de toutes les marchandises à l'avance (offline),
+    ce qui permet de les trier pour améliorer le placement.
+
+    On simplifie ici le problème à une seule dimension :
+    - chaque objet consomme une "longueur"
+    - chaque conteneur a une capacité fixe
+
+    Stratégie :
+    ----------
+    1. Tri décroissant des objets (les plus longs d'abord)
+    2. First Fit : on place dans le premier conteneur disponible
+    3. Sinon, on ouvre un nouveau conteneur
+
+    Cette stratégie est une heuristique classique qui donne de bons résultats
+    sans garantir l'optimalité.
+
+    Args:
+        inventaire (list): liste des marchandises (avec champ "Longueur")
+
+    Returns:
+        tuple:
+            - nombre de conteneurs utilisés
+            - affectation des objets par conteneur
+            - capacité restante dans chaque conteneur
+    """
+    # Tri décroissant : on place d'abord les objets les plus longs
+    # Cela réduit le risque de bloquer des grandes pièces plus tard.
+    triees = sorted(inventaire, key=lambda m: m["Longueur"], reverse=True)
+
+    longueurs_restantes = []
+    affectation = []
+
+    # On parcourt les objets dans l'ordre trié (offline)
+    for marchandise in triees:
+        placee = False
+
+        # On essaie de la placer dans un conteneur déjà ouvert
+        for c in range(len(longueurs_restantes)):
+
+            # Si la capacité restante est suffisante
+            if longueurs_restantes[c] >= marchandise["Longueur"]:
+
+                # On consomme de la capacité dans ce conteneur
+                longueurs_restantes[c] -= marchandise["Longueur"]
+
+                # On enregistre l'affectation
+                affectation[c].append(marchandise["id"])
+
+                placee = True
+                break  # First Fit : on s'arrête dès qu'on a trouvé un emplacement
+
+        # Si aucun conteneur existant ne peut accueillir l'objet
+        if not placee:
+
+            # Vérification de faisabilité physique
+            if marchandise["Longueur"] > CONTENEUR_L:
+                raise ValueError(
+                    f"La marchandise {marchandise['id']} "
+                    f"(longueur {marchandise['Longueur']}) "
+                    f"ne rentre pas dans un conteneur vide !"
+                )
+
+            # Création d'un nouveau conteneur avec capacité initiale réduite
+            longueurs_restantes.append(CONTENEUR_L - marchandise["Longueur"])
+            affectation.append([marchandise["id"]])
+
+    return len(affectation), affectation, longueurs_restantes
+
+
+def verifier(inventaire, affectation):
+    """
+    Vérifie l'intégrité de la solution de bin packing.
+
+    Principe :
+    ----------
+    On s'assure que :
+    - chaque marchandise est placée exactement une fois
+    - aucune marchandise n'est oubliée ou dupliquée
+
+    Cela garantit la cohérence du résultat de l'algorithme.
+
+    Args:
+        inventaire (list): liste initiale des marchandises
+        affectation (list): résultat du placement
+
+    Returns:
+        None (affiche uniquement des diagnostics)
+    """
+    ids_inventaire = set(m["id"] for m in inventaire)
+
+    # Reconstruction de la liste des IDs placés
+    ids_places = []
+    for conteneur in affectation:
+        for id in conteneur:
+            ids_places.append(id)
+
+    # Détection des oublis
+    manquants = ids_inventaire - set(ids_places)
+
+    # Détection des doublons (complexité O(n²) implicite via count)
+    doublons = set()
+    for id in ids_places:
+        if ids_places.count(id) > 1:
+            doublons.add(id)
+
+    # Rapport d'erreurs ou validation
+    if manquants:
+        print(f"Marchandises non placées : {manquants}")
+    if doublons:
+        print(f"Marchandises placées en double : {doublons}")
+    if not manquants and not doublons:
+        print(f"Toutes les {len(ids_inventaire)} marchandises sont placées exactement une fois.")
+
+
+
+# Chargement des données d'entrée (CSV d'inventaire)
 inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
 
-# Capacité wagon en millimètres (constante entière)
-longueur_wagon = 11583 # on convertit la longueur du wagon en millimètres pour pouvoir travailler avec des entiers et éviter les problèmes de précision liés aux nombres à virgule flottante, ce qui peut rendre l'algorithme plus rapide et plus fiable (car les opérations sur les entiers sont généralement plus rapides que les opérations sur les nombres à virgule flottante, et les problèmes de précision peuvent entraîner des erreurs dans le calcul de la capacité restante du wagon, ce qui peut conduire à des décisions incorrectes sur l'ajout d'objets dans le wagon)
-nombre_wagons = 0
-reste = 0
+# Mesure du temps d'exécution de l'algorithme
+t_start = time()
 
-# Liste des longueurs (mm) triée décroissante — heuristique First-Fit Decreasing
-longueur_objets = sorted((m["Longueur"] for m in inventaire), reverse=True)
+# Exécution de l'algorithme 1D offline
+nb_wagons, affectation, longueurs_restantes = bin_packing_d1_offline(inventaire)
 
-while longueur_objets:
-    nombre_wagons += 1
-    remaining = longueur_wagon
-    print(f'Wagon {nombre_wagons} start capacity: {remaining} mm')
+t_fin = time()
 
-    # Parcours sûr des objets : on parcourt par index et on supprime les objets chargés.
-    i = 0
-    while i < len(longueur_objets):
-        if longueur_objets[i] <= remaining:
-            remaining -= longueur_objets[i]
-            del longueur_objets[i]
-        else:
-            i += 1
+# Index pour accès rapide aux données des marchandises par ID
+index = {}
+for m in inventaire:
+    index[m["id"]] = m
 
-    print(f'Wagon {nombre_wagons} end remaining: {remaining} mm')
-    reste += remaining
+print(f"Nombre de wagons nécessaires (d=1, offline) : {nb_wagons}")
 
-time2 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le comparer avec d'autres algorithmes qui pourraient être plus efficaces pour résoudre ce problème, et pour pouvoir évaluer la performance de l'algorithme en fonction de la taille de la liste des longueurs des objets (car plus la liste est grande, plus l'algorithme peut être long à exécuter, donc il est important de mesurer le temps d'exécution pour pouvoir évaluer la performance de l'algorithme)
+# Vérification de la cohérence globale de la solution
+verifier(inventaire, affectation)
 
-Timetotal = time2 - time1
+print("\nDétail par conteneur :")
 
-print(f'Nombre de wagons nécessaires : {nombre_wagons}')
-print(f'Longueur totale de la place non utilisée des wagons (mm) : {reste}')
-print(longueur_objets)
-print(f'Temps d\'exécution de l\'algorithme : {Timetotal} secondes')
+taux_total = 0
 
-print(nombre_wagons * 11583 - reste) # longueur totale des objets chargés dans les wagons (mm)
+for c in range(len(affectation)):
+
+    ids = affectation[c]
+
+    # Calcul de la longueur réellement utilisée dans le conteneur
+    longueur_utilisee = CONTENEUR_L - longueurs_restantes[c]
+
+    # Taux de remplissage en 1D
+    taux = longueur_utilisee / CONTENEUR_L * 100
+    taux_total += taux
+
+    print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
+
+# Moyenne globale de remplissage
+print(f"\nTaux de remplissage moyen : {taux_total / nb_wagons:.1f}%")
+
+# Temps total d'exécution de l'algorithme
+print(f"Temps total d'execution: {t_fin - t_start}")
