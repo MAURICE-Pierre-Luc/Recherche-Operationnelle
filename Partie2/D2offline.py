@@ -38,13 +38,13 @@ def choisir_sens_coupe(espace, marchandise, restantes):
     x, y, l, la = espace  # Décomposition de l'espace courant (position + dimensions)
     ml, mla = marchandise["Longueur"], marchandise["Largeur"]
 
-    # --- Simulation coupe horizontale ---
+    # Simulation coupe horizontale
     # On place l'objet puis on découpe l'espace restant en deux zones :
     # une zone au-dessus et une zone à droite.
     r1_h = (x, y + mla, ml, la - mla)
     r2_h = (x + ml, y, l - ml, la)
 
-    # --- Simulation coupe verticale ---
+    # Simulation coupe verticale
     # Variante où les zones restantes sont découpées différemment
     r1_v = (x + ml, y, l - ml, mla)
     r2_v = (x, y + mla, l, la - mla)
@@ -79,7 +79,7 @@ def choisir_sens_coupe(espace, marchandise, restantes):
 
         return compte
 
-    # --- Choix du meilleur sens de coupe ---
+    # Choix du meilleur sens de coupe
     # On compare les deux scénarios et on garde celui qui maximise la capacité future.
     if score([r1_h, r2_h]) >= score([r1_v, r2_v]):
         return [r1_h, r2_h], "horizontal"

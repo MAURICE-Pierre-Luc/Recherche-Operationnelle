@@ -43,7 +43,7 @@ def couper_espace(espace, marchandise, ordre):
     mla = marchandise["Largeur"]
     mh  = marchandise["Hauteur"]
 
-    # --- Principe de découpe ---
+    # Principe de découpe
     # On va construire des sous-volumes en respectant une logique hiérarchique :
     # chaque axe est traité selon l'ordre donné (important pour l'optimisation globale).
 
@@ -165,23 +165,6 @@ def choisir_ordre_coupe(espace, marchandise, restantes):
             meilleurs_espaces = valides
 
     return meilleurs_espaces
-
-
-def premiere_marchandise_qui_rentre(espace, restantes):
-    """
-    Implémente une logique First Fit simplifiée.
-
-    Principe :
-    ----------
-    On parcourt les marchandises dans l'ordre et on retourne
-    la première qui peut rentrer dans l'espace donné.
-
-    Cela correspond à une stratégie gloutonne simple.
-    """
-    for m in restantes:
-        if marchandise_rentre(espace, m):
-            return m
-    return None
 
 
 def placer_dans_conteneurs(marchandise, conteneurs, affectation, restantes):

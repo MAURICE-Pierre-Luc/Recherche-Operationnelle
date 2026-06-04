@@ -12,7 +12,7 @@ CONTENEUR_h = 2569
 # Seuil minimal pour garder un espace libre
 # En 3D, les découpes génèrent encore plus de petits volumes résiduels.
 # Ce seuil permet d'éviter la fragmentation inutile de l'espace.
-SEUIL = 0.01
+SEUIL = 10
 
 
 def couper_espace(espace, marchandise, ordre):
@@ -43,7 +43,7 @@ def couper_espace(espace, marchandise, ordre):
     mla = marchandise["Largeur"]
     mh  = marchandise["Hauteur"]
 
-    # --- Coupes théoriques selon chaque axe ---
+    # Coupes théoriques selon chaque axe
     # Ces coupes représentent les volumes résiduels si on "retire" l'objet
     coupes = {
         "x": (ex + ml, ey,       ez,       el - ml,  ela,       eh      ),  # droite
@@ -55,42 +55,73 @@ def couper_espace(espace, marchandise, ordre):
     espaces = []
     taille = {"x": el, "y": ela, "z": eh}
 
-    # IMPORTANT :
     # Chaque axe dans l'ordre influence les dimensions restantes des autres axes.
     # C'est une cascade de contraintes géométriques.
     for i, axe in enumerate(ordre):
-
+        # i = position dans l'ordre de coupe (0 = première coupe, 2 = dernière)
+        # axe = l'axe courant ("x", "y" ou "z")
+        
         if axe == "x":
             e = (
-                ex + ml,
-                ey,
-                ez,
-                el - ml,
+                ex + ml,   # origine x : décalée de la taille de la marchandise (espace à droite)
+                ey,        # origine y : inchangée
+                ez,        # origine z : inchangée
+
+                el - ml,   # dimension x : ce qui reste après la marchandise (toujours pareil pour x)
+
+                # dimension y :
+                # - si x est coupé en premier (i==0), y n'est pas encore contraint -> on prend ela entier
+                # - sinon, y a déjà été coupé avant x -> on prend seulement mla (largeur marchandise)
+                #   SAUF si c'est z qui a été coupé en premier -> dans ce cas on prend ela entier
                 ela if i == 0 else (mla if ordre[0] == "y" else taille["y"]),
-                eh  if i <= 1 else mh
+
+                # dimension z :
+                # - si x est coupé en premier ou deuxième (i <= 1), z n'est pas encore contraint -> eh entier
+                # - si x est coupé en dernier (i == 2), z a déjà été coupé -> seulement mh
+                eh if i <= 1 else mh
             )
 
         elif axe == "y":
             e = (
-                ex,
-                ey + mla,
-                ez,
-                ml  if i == 0 else (ml if ordre[0] == "x" else taille["x"]),
-                ela - mla,
-                eh  if i <= 1 else mh
+                ex,        # origine x : inchangée
+                ey + mla,  # origine y : décalée de la largeur marchandise (espace derrière)
+                ez,        # origine z : inchangée
+
+                # dimension x :
+                # - si y est coupé en premier (i==0), x pas encore contraint -> ml (longueur marchandise)
+                # - sinon, x a déjà été coupé avant y -> on regarde qui était premier :
+                #   si c'était x -> on prend ml, sinon (c'était z) -> on prend taille["x"] entier
+                ml if i == 0 else (ml if ordre[0] == "x" else taille["x"]),
+            
+                ela - mla, # dimension y : ce qui reste après la marchandise (toujours pareil pour y)
+
+                # dimension z : même logique que pour l'axe x ci-dessus
+                # - z pas encore coupé si y est en position 0 ou 1 -> eh entier
+                # - z déjà coupé si y est en dernière position -> seulement mh
+                eh if i <= 1 else mh
             )
 
-        else:  # axe z
+        else:  # axe == "z"
             e = (
-                ex,
-                ey,
-                ez + mh,
-                el  if i == 0 else (ml if ordre[0] == "x" else taille["x"]),
+                ex,       # origine x : inchangée
+                ey,       # origine y : inchangée
+                ez + mh,  # origine z : décalée de la hauteur marchandise (espace au-dessus)
+
+                # dimension x :
+                # - si z est coupé en premier (i==0), x pas encore contraint -> el entier
+                # - sinon, x a peut-être été coupé avant :
+                #   si x était premier dans l'ordre -> on prend ml, sinon -> el entier
+                el if i == 0 else (ml if ordre[0] == "x" else taille["x"]),
+
+                # dimension y : même logique
+                # - si z est coupé en premier (i==0) -> ela entier
+                # - sinon : si y était premier -> on prend mla, sinon -> ela entier
                 ela if i == 0 else (mla if ordre[0] == "y" else taille["y"]),
-                eh - mh
+
+                eh - mh   # dimension z : ce qui reste après la marchandise (toujours pareil pour z)
             )
 
-        espaces.append(e)
+        espaces.append(e)   
 
     return espaces
 
@@ -250,7 +281,7 @@ def bin_packing_d3_offline(inventaire):
     - Remplissage conteneur par conteneur
     - Placement glouton dans les volumes libres
     - Choix optimal des découpes 3D (6 permutations possibles)
-    - Ouverture d’un nouveau conteneur uniquement si nécessaire
+    - Ouverture d'un nouveau conteneur uniquement si nécessaire
 
     Args:
         inventaire (list): liste des marchandises
@@ -292,7 +323,7 @@ def bin_packing_d3_offline(inventaire):
         if not placees:
             raise ValueError(
                 f"La marchandise {restantes[0]['id']} "
-                f"({restantes[0]['Longueur']}×{restantes[0]['Largeur']}×{restantes[0]['Hauteur']}) "
+                f"({restantes[0]['Longueur']}*{restantes[0]['Largeur']}*{restantes[0]['Hauteur']}) "
                 f"ne rentre pas dans un conteneur vide !"
             )
 
@@ -366,7 +397,7 @@ for c, ids in enumerate(affectation):
     taux = volume_utilise / volume_conteneur * 100
     taux_total += taux
 
-    print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
+    print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli -> ids {ids}")
 
 # Moyenne globale de remplissage
 print(f"\nTaux de remplissage moyen : {taux_total / nb_wagons:.1f}%")

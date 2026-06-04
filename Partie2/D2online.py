@@ -41,12 +41,12 @@ def choisir_sens_coupe(espace, marchandise, restantes):
     x, y, l, la = espace  # Décomposition de l'espace courant (position + dimensions)
     ml, mla = marchandise["Longueur"], marchandise["Largeur"]
 
-    # --- Simulation de coupe horizontale ---
+    # Simulation de coupe horizontale
     # On place la marchandise et on découpe l'espace restant selon une coupe horizontale.
     r1_h = (x, y + mla, ml, la - mla)      # espace au-dessus / restant verticalement
     r2_h = (x + ml, y, l - ml, la)         # espace à droite
 
-    # --- Simulation de coupe verticale ---
+    # Simulation de coupe verticale
     # Même logique mais inversion des zones découpées
     r1_v = (x + ml, y, l - ml, mla)
     r2_v = (x, y + mla, l, la - mla)
@@ -54,15 +54,14 @@ def choisir_sens_coupe(espace, marchandise, restantes):
     def score(espaces):
         # Fonction d'évaluation heuristique :
         # On compte combien de marchandises restantes peuvent être placées
-        # dans AU MOINS un des espaces générés.
+        # dans au moins un des espaces générés.
         total = 0
 
         for m in restantes:
             peut_tenir = False
 
             for e in espaces:
-                # On ignore les micro-espaces inutilisables pour éviter
-                # de polluer la décision avec des fragments trop petits.
+                # On ignore les micro-espaces inutilisables pour éviter de polluer la décision avec des fragments trop petits.
                 if e[2] <= SEUIL or e[3] <= SEUIL:
                     continue
 
@@ -76,7 +75,7 @@ def choisir_sens_coupe(espace, marchandise, restantes):
 
         return total
 
-    # --- Choix final du sens de coupe ---
+    # Choix final du sens de coupe
     # On compare les deux stratégies et on garde celle qui maximise l'usage futur.
     if score([r1_h, r2_h]) >= score([r1_v, r2_v]):
         return [r1_h, r2_h], "horizontal"
