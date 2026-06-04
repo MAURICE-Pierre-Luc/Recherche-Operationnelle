@@ -1,11 +1,10 @@
 from Read_csv import lire_inventaire
 from time import time
 
-time1 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le comparer avec d'autres algorithmes qui pourraient être plus efficaces pour résoudre ce problème, et pour pouvoir évaluer la performance de l'algorithme en fonction de la taille de la liste des longueurs des objets (car plus la liste est grande, plus l'algorithme peut être long à exécuter, donc il est important de mesurer le temps d'exécution pour pouvoir évaluer la performance de l'algorithme)
 inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
 
+time1 = time() # on mesure le temps d'exécution de l'algorithme pour pouvoir le comparer avec d'autres algorithmes qui pourraient être plus efficaces pour résoudre ce problème, et pour pouvoir évaluer la performance de l'algorithme en fonction de la taille de la liste des longueurs des objets (car plus la liste est grande, plus l'algorithme peut être long à exécuter, donc il est important de mesurer le temps d'exécution pour pouvoir évaluer la performance de l'algorithme)
 
-print(inventaire)
 longueur_wagon = 11.583
 conteneur = 0
 nombre_wagons = 1
