@@ -3,42 +3,122 @@ from time import time
 from Objets_Velo import objets_velo
 
 
-def solve(objets_velo, target_kg):
+def Algo_A(objets_velo, target_kg):
+    """
+    Résout un problème d'optimisation de type "sac à dos" (knapsack) appliqué ici à un chargement de vélo.
+
+    Principe / stratégie :
+    On utilise une exploration exhaustive avec retour arrière (backtracking / DFS).
+    L'objectif est de tester toutes les combinaisons possibles d'objets, en respectant une contrainte de poids maximal,
+    afin de maximiser une utilité totale.
+
+    Cette approche garantit de trouver la meilleure solution, mais peut être coûteuse en temps si beaucoup d'objets existent.
+
+    Args:
+        objets_velo (dict): dictionnaire où chaque clé est le nom d'un objet, et la valeur est un tuple :
+                            (poids, utilité, autre_information).
+        target_kg (int | float): capacité maximale du sac (ici le vélo) en kilogrammes.
+
+    Returns:
+        tuple: (meilleure_utilité, meilleur_poids_en_kg, liste_des_objets_choisis)
+    """
+
+    # On transforme le dictionnaire en liste pour accéder facilement aux éléments par index
     items = list(objets_velo.items())
+
+    # Nombre total d'objets disponibles
     n = len(items)
-    best_utility = -1
-    best_weight = 0
-    best_solution = []
+
+    target_kg *= 1000 # On multiplie par 1000 pour éviter les erreurs sur les flotants
+
+    # Variables globales de suivi de la meilleure solution trouvée
+    best_utility = -1          # meilleure utilité trouvée jusqu’ici
+    best_weight = 0            # poids associé à cette meilleure solution
+    best_solution = []         # liste des objets correspondants
 
     def dfs(i, remaining, current_utility, current_weight, current_solution):
+        """
+        Fonction récursive de type DFS (Depth First Search) utilisée pour explorer toutes les combinaisons possibles.
+
+        Principe :
+        À chaque objet, on a deux choix :
+        - ne pas le prendre
+        - le prendre (si le poids restant le permet)
+
+        On explore récursivement ces deux branches pour construire toutes les solutions possibles.
+
+        Args:
+            i (int): index de l'objet actuellement considéré
+            remaining (int): poids restant disponible (en grammes)
+            current_utility (int): utilité cumulée de la solution en cours
+            current_weight (int): poids cumulée de la solution en cours
+            current_solution (list): liste des objets actuellement sélectionnés
+        """
         nonlocal best_utility, best_weight, best_solution
+
+        # CAS DE BASE : on a traité tous les objets
         if i == n:
+            # On compare la solution actuelle avec la meilleure trouvée
             if current_utility > best_utility:
-                best_utility = current_utility
-                best_weight = current_weight
-                best_solution = current_solution.copy()
+                best_utility = current_utility  # mise à jour de la meilleure utilité
+                best_weight = current_weight    # mise à jour du poids correspondant
+                best_solution = current_solution.copy()  # copie pour figer la solution
             return
 
+        # Récupération des données de l’objet courant
         name, (w, v, _) = items[i]
 
-        # On ne prend pas l'objet
+        # On explore le cas où on ignore l’objet actuel.
+        # Cela permet de ne pas rater une combinaison potentiellement meilleure plus tard.
         dfs(i + 1, remaining, current_utility, current_weight, current_solution)
 
-        # On le prend si ça rentre
+
+        # On vérifie si l’objet peut être ajouté sans dépasser la contrainte de poids
         if remaining - w >= 0:
-            current_solution.append(name)
-            dfs(i + 1, remaining - w, current_utility + v, current_weight + w, current_solution)
+            current_solution.append(name)  # on ajoute temporairement l’objet à la solution
+
+            # appel récursif avec mise à jour des contraintes et des scores
+            dfs(i + 1,
+                remaining - w,                  # on réduit le poids disponible
+                current_utility + v,           # on ajoute l’utilité de l’objet
+                current_weight + w,            # on ajoute son poids
+                current_solution)
+
+            # BACKTRACKING :
+            # on retire l’objet après exploration pour revenir à l’état précédent
+            # (essentiel pour tester d’autres combinaisons correctement)
             current_solution.pop()
 
-    dfs(0, target_kg * 1000, 0, 0, [])
-    return best_utility, best_weight / 1000, best_solution
+    # Lancement de la recherche avec :
+    # - tous les objets disponibles
+    # - poids converti en grammes pour éviter les flottants imprécis
+    dfs(0, target_kg, 0, 0, [])
 
-t_start = time()
-best_utility, best_weight, best_solution = solve(objets_velo, target_kg=0.6)
-t_fin = time()
+    # On retourne la meilleure solution trouvée
+    return best_utility/100, best_weight / 1000, best_solution
 
 
-print(f"Utilité : {best_utility / 100}")
-print(f"Poids   : {best_weight}kg")
-print(f"Objets  : {best_solution}")
-print(f"Temps   : {t_fin - t_start}s")
+poids = [2,3,4,5]
+
+for poid in poids:
+
+    print("Pour une capacité de", poid, "kg, les objets suivants sont choisis :")
+    
+    t_start = time()  # début du chronomètre
+    best_utility, best_weight, best_solution = Algo_A(objets_velo, poid) # exécution de l'algorithme complet
+    t_fin = time()  # fin du chronomètre
+
+
+    print(f"Utilité : {best_utility}")
+    # On divise par 100 probablement pour revenir à une échelle lisible (ex: centi-unités -> unités)
+
+    print(f"Poids : {best_weight}kg")
+    # Poids final de la solution optimale
+
+    print(f"Objets : {best_solution}")
+    # Liste des objets sélectionnés dans la meilleure solution
+
+    print(f"Temps : {t_fin - t_start}s")
+    # Temps d'exécution pour évaluer la performance de l'algorithme
+
+    print()
