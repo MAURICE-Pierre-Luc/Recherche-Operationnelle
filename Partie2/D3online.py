@@ -309,53 +309,49 @@ def verifier(inventaire, affectation):
         print(f"Toutes les {len(ids_inventaire)} marchandises sont placées exactement une fois.")
 
 
-# -------------------------
-# POINT D'ENTRÉE DU SCRIPT
-# -------------------------
-if __name__ == "__main__":
 
-    t_start = time()
+t_start = time()
 
-    # Chargement de l'inventaire depuis le fichier CSV
-    inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
+# Chargement de l'inventaire depuis le fichier CSV
+inventaire = lire_inventaire("./Partie2/DonnesMarchandise.csv")
 
-    # Exécution de l'algorithme de bin packing 3D online
-    nb_wagons, affectation = bin_packing_d3_online(inventaire)
+# Exécution de l'algorithme de bin packing 3D online
+nb_wagons, affectation = bin_packing_d3_online(inventaire)
 
-    t_fin = time()
+t_fin = time()
 
-    # Index pour accès rapide aux métadonnées des marchandises
-    index = {m["id"]: m for m in inventaire}
+# Index pour accès rapide aux métadonnées des marchandises
+index = {m["id"]: m for m in inventaire}
 
-    # Volume total d'un conteneur (référence pour taux de remplissage)
-    volume_conteneur = CONTENEUR_L * CONTENEUR_l * CONTENEUR_h
+# Volume total d'un conteneur (référence pour taux de remplissage)
+volume_conteneur = CONTENEUR_L * CONTENEUR_l * CONTENEUR_h
 
-    print(f"Nombre de wagons nécessaires (d=3, online) : {nb_wagons}")
+print(f"Nombre de wagons nécessaires (d=3, online) : {nb_wagons}")
 
-    # Vérification de cohérence globale
-    verifier(inventaire, affectation)
+# Vérification de cohérence globale
+verifier(inventaire, affectation)
 
-    print("\nDétail par conteneur :")
+print("\nDétail par conteneur :")
 
-    taux_total = 0
+taux_total = 0
 
-    for c in range(len(affectation)):
+for c in range(len(affectation)):
 
-        ids = affectation[c]
+    ids = affectation[c]
 
-        # Calcul du volume réellement occupé
-        volume_utilise = 0
-        for id in ids:
-            volume_utilise += index[id]["Volume_mm3"]
+    # Calcul du volume réellement occupé
+    volume_utilise = 0
+    for id in ids:
+        volume_utilise += index[id]["Volume_mm3"]
 
-        # Taux de remplissage du conteneur
-        taux = volume_utilise / volume_conteneur * 100
-        taux_total += taux
+    # Taux de remplissage du conteneur
+    taux = volume_utilise / volume_conteneur * 100
+    taux_total += taux
 
-        print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
+    print(f"  Conteneur {c+1} : {len(ids)} marchandises | {taux:.1f}% rempli → ids {ids}")
 
-    # Moyenne globale
-    print(f"\nTaux de remplissage moyen : {taux_total / nb_wagons:.1f}%")
+# Moyenne globale
+print(f"\nTaux de remplissage moyen : {taux_total / nb_wagons:.1f}%")
 
-    # Mesure du temps d'exécution
-    print(f"Temps total d'execution: {t_fin - t_start} secondes")
+# Mesure du temps d'exécution
+print(f"Temps total d'execution: {t_fin - t_start} secondes")
