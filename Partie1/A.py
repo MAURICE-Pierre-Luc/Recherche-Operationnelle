@@ -1,6 +1,6 @@
 from time import time
 
-from Partie1.Objets_Velo import objets_velo
+from Objets_Velo import objets_velo
 
 
 def solve(objets_velo, target_kg):
@@ -34,7 +34,7 @@ def solve(objets_velo, target_kg):
     return best_utility, best_weight / 1000, best_solution
 
 t_start = time()
-best_utility, best_weight, best_solution = solve(objets_velo, target_kg=5)
+best_utility, best_weight, best_solution = solve(objets_velo, target_kg=0.6)
 t_fin = time()
 
 
