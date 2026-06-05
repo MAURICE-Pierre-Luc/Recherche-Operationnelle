@@ -37,7 +37,7 @@ def Algo_B_prime(poid_uniques, poid): #Algorithme glouton qui choisit les objets
                     break # Une fois qu'on a trouvé l'objet correspondant au poids de l'objet choisi, on peut passer à l'objet suivant (car il n'y a pas de doublons dans la liste des objets choisis, donc on ne risque pas de trouver un autre objet avec le même poids)
     
 
-    return sum(utils)/100, values # On retourne l'utilité totale des objets choisis et les objets choisis
+    return sum(utils)/100, values, sum(poid_choisis)/1000 # On retourne l'utilité totale des objets choisis et les objets choisis
 
 
 
@@ -48,11 +48,12 @@ for poid in poids:
     print("Pour une capacité de", poid, "kg, les objets suivants sont choisis :")
 
     t_start = time()
-    utils, values = Algo_B_prime(poid_uniques, poid)
+    utils, values, poid = Algo_B_prime(poid_uniques, poid)
     t_fin=time()
 
     print(f'Nom des objets a prendre: {values}') # Affiche les objets choisis pour la capacité de sac i
     print(f'Utilite: {utils}')# Affiche l'utilité totale des objets choisis pour la capacité de sac i
+    print(f'Poid du sac: {poid}') # Affiche le poid finnal du sac
     print(f'Temps ecoule: {t_fin - t_start}')
     print()
 
