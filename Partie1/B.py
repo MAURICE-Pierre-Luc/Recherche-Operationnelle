@@ -66,6 +66,8 @@ dico = dict(
 )
 
 poids = [2, 3, 4, 5]
+    
+print("Algorithme B")
 
 # On teste l'algorithme pour différentes capacités de sac
 for poid in poids:

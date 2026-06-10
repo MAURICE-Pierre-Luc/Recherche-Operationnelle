@@ -43,6 +43,8 @@ def Algo_B_prime(poid_uniques, poid): #Algorithme glouton qui choisit les objets
 
 poids = [2, 3, 4, 5] # On choisit des capacités de sac différentes pour tester l'algorithme, en prenant des valeurs entre la limite de poid min et max
 
+print("Algorithme B prime")
+
 for poid in poids:
 
     print("Pour une capacité de", poid, "kg, les objets suivants sont choisis :")

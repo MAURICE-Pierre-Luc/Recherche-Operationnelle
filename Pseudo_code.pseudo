@@ -1,0 +1,470 @@
+
+
+
+Algorithme : Algo_A
+
+Variables
+    objets en Tableau
+    poids_max en Numérique
+    meilleure_utilite en Numérique
+    meilleur_poids en Numérique
+    meilleure_solution en Tableau
+
+Début
+    meilleure_utilite ← -1
+    meilleur_poids ← 0
+    meilleure_solution ← []
+
+    Fonction dfs(i, poids_restant, utilite_courante, poids_courant, solution_courante)
+    Début
+
+        Si i = Longueur(objets) Alors
+            Si utilite_courante > meilleure_utilite Alors
+                meilleure_utilite ← utilite_courante
+                meilleur_poids ← poids_courant
+                meilleure_solution ← solution_courante
+            FinSi
+
+        Sinon
+            // Branche 1 : on ignore l'objet i
+            dfs(i + 1, poids_restant, utilite_courante, poids_courant, solution_courante)
+
+            // Branche 2 : on prend l'objet i si le poids le permet
+            Si poids_restant >= poids[i] Alors
+                Ajouter objets[i] à solution_courante
+                
+                dfs(i + 1, poids_restant - poids[i], utilite_courante + utilite[i], 
+                poids_courant + poids[i], solution_courante)
+
+                Retirer le dernier élément de solution_courante
+            FinSi
+        FinSi
+    Fin
+
+    dfs(0, poids_max, 0, 0, [])
+
+    Retourner meilleure_utilite, meilleur_poids, meilleure_solution
+Fin
+
+
+Algorithme : Algo_B
+
+Variables
+    poids_max en Numérique
+    objets en Tableau
+    objets_tries en Tableau
+    sac en Tableau
+    m_tot en Numérique
+    util_tot en Numérique
+
+Début
+
+    m_tot ← 0
+    util_tot ← 0
+    sac ← []
+
+    // Tri décroissant des objets selon leur ratio utilité/poids
+    objets_tries ← Trier objets par ratio utilité/poids décroissant
+
+    Pour chaque objet de objets_tries Faire
+        Si m_tot + poids[objet] <= poids_max Alors
+            Ajouter objet à sac
+            m_tot ← m_tot + poids[objet]
+            util_tot ← util_tot + utilite[objet]
+        FinSi
+    FinPour
+
+    Retourner sac, util_tot, m_tot
+
+Fin
+
+
+
+Algorithme : Algo_B_prime
+
+Variables
+    poids_uniques en Tableau   // poids distincts triés du plus lourd au plus léger
+    n_poids en Tableau         // nombre d'objets disponibles pour chaque poids
+    poids_max en Numérique
+    poids_choisis en Tableau
+    objets_choisis en Tableau
+    utils en Tableau
+
+Début
+
+    poids_choisis ← []
+    objets_choisis ← []
+    utils ← []
+
+    // Étape 1 : remplissage du sac par poids décroissant
+    Pour i de 0 à Longueur(poids_uniques) - 1 Faire
+        Pour j de 0 à n_poids[i] - 1 Faire
+            Si poids_max - poids_uniques[i] >= 0 Alors
+                poids_max ← poids_max - poids_uniques[i]
+                Ajouter poids_uniques[i] à poids_choisis
+            Sinon
+                Quitter la boucle intérieure
+            FinSi
+        FinPour
+        Si poids_max = 0 Alors
+            Quitter la boucle extérieure
+        FinSi
+    FinPour
+
+    // Étape 2 : retrouver les objets et utilités correspondants aux poids choisis
+    Pour chaque poids de poids_choisis Faire
+        Pour chaque objet de objets_velo Faire
+            Si poids[objet] = poids ET objet non dans objets_choisis Alors
+                Ajouter utilite[objet] à utils
+                Ajouter objet à objets_choisis
+                Quitter la boucle intérieure
+            FinSi
+        FinPour
+    FinPour
+
+    Retourner Somme(utils), objets_choisis
+
+Fin
+
+
+
+Algorithme : bin_packing_d1_offline
+
+Variables
+    inventaire en Tableau
+    triees en Tableau
+    longueurs_restantes en Tableau
+    affectation en Tableau
+    placee en Booléen
+Début
+
+    // Étape 1 : tri décroissant par longueur
+    triees ← Trier inventaire par longueur décroissante
+
+    longueurs_restantes ← []
+    affectation ← []
+
+    // Étape 2 : placement First Fit
+    Pour chaque marchandise de triees Faire
+        placee ← FAUX
+
+        Pour chaque conteneur c de affectation Faire
+            Si longueurs_restantes[c] >= longueur[marchandise] Alors
+                longueurs_restantes[c] ← longueurs_restantes[c] - longueur[marchandise]
+                Ajouter marchandise à affectation[c]
+                placee ← VRAI
+                Quitter la boucle intérieure
+            FinSi
+        FinPour
+
+        // Aucun conteneur existant ne convient : on en ouvre un nouveau
+        Si NON placee Alors
+            Ajouter (CONTENEUR_L - longueur[marchandise]) à longueurs_restantes
+            Ajouter [marchandise] à affectation
+        FinSi
+
+    FinPour
+
+    Retourner Longueur(affectation), affectation, longueurs_restantes
+Fin
+
+
+
+Algorithme : bin_packing_d1_online
+
+Variables
+    inventaire en Tableau
+    longueurs_restantes en Tableau
+    affectation en Tableau
+    placee en Booléen
+
+Début
+
+    longueurs_restantes ← []
+    affectation ← []
+
+    // Pas de tri : on traite les marchandises dans leur ordre d'arrivée
+    Pour chaque marchandise de inventaire Faire
+        placee ← FAUX
+
+        Pour chaque conteneur c de affectation Faire
+            Si longueurs_restantes[c] >= longueur[marchandise] Alors
+                longueurs_restantes[c] ← longueurs_restantes[c] - longueur[marchandise]
+                Ajouter marchandise à affectation[c]
+                placee ← VRAI
+                Quitter la boucle intérieure
+            FinSi
+        FinPour
+
+        // Aucun conteneur existant ne convient : on en ouvre un nouveau
+        Si NON placee Alors
+            Ajouter (CONTENEUR_L - longueur[marchandise]) à longueurs_restantes
+            Ajouter [marchandise] à affectation
+        FinSi
+
+    FinPour
+
+    Retourner Longueur(affectation), affectation, longueurs_restantes
+Fin
+
+
+Algorithme : bin_packing_d2_offline
+
+Variables
+    inventaire en Tableau
+    restantes en Tableau
+    conteneurs en Tableau
+    affectation en Tableau
+Début
+
+    // Étape 1 : tri décroissant par largeur puis longueur
+    restantes ← Trier inventaire par (largeur, longueur) décroissant
+    // Étape 2 : remplissage conteneur par conteneur
+    TantQue restantes non vide Faire
+
+        // Tentative de remplissage des conteneurs existants
+        Pour chaque conteneur c Faire
+            remplir_conteneur(conteneur[c], restantes, affectation[c])
+            Si restantes vide Alors Quitter FinSi
+        FinPour
+
+        Si restantes non vide Alors
+            // Ouverture d'un nouveau conteneur
+            nouvel_espace ← [(0, 0, CONTENEUR_L, CONTENEUR_l)]
+            remplir_conteneur(nouvel_espace, restantes, nouvelles_placees)
+            Ajouter nouvel_espace à conteneurs
+            Ajouter nouvelles_placees à affectation
+        FinSi
+    FinTantQue
+
+    Retourner Longueur(conteneurs), affectation
+Fin
+
+Fonction remplir_conteneur(espaces, restantes, placees)
+Début
+    Pour chaque espace libre Faire
+        marchandise ← meilleure_marchandise(espace, restantes)
+        Si marchandise = None Alors passer à l'espace suivant FinSi
+
+        nouveaux_espaces, sens ← choisir_sens_coupe(espace, marchandise, restantes)
+        Remplacer espace par nouveaux_espaces (en supprimant les micro-fragments)
+        Retirer marchandise de restantes
+        Ajouter marchandise à placees
+    FinPour
+Fin
+
+Fonction choisir_sens_coupe(espace, marchandise, restantes)
+Début
+    Simuler coupe horizontale → espaces_H
+    Simuler coupe verticale → espaces_V
+
+    score_H ← nombre de marchandises restantes pouvant tenir dans espaces_H
+    score_V ← nombre de marchandises restantes pouvant tenir dans espaces_V
+
+    Si score_H >= score_V Alors
+        Retourner espaces_H, "horizontal"
+    Sinon
+        Retourner espaces_V, "vertical"
+    FinSi
+Fin
+
+Fonction meilleure_marchandise(espace, restantes)
+Début
+    candidates ← marchandises rentrant dans l'espace
+    Si candidates vide Alors Retourner None FinSi
+
+    Si coupe = "horizontal" Alors
+        Retourner candidate avec largeur maximale (puis longueur)
+    Sinon
+        Retourner candidate avec longueur maximale (puis largeur)
+    FinSi
+Fin
+
+Algorithme : bin_packing_d2_online
+
+Variables
+    inventaire en Tableau
+    conteneurs en Tableau
+    affectation en Tableau
+    placee en Booléen
+
+Début
+
+    // Pas de tri : traitement dans l'ordre d'arrivée
+    Pour chaque marchandise i de inventaire Faire
+        restantes ← inventaire[i+1 à fin]
+
+        placee ← placer_dans_conteneurs(marchandise, conteneurs, affectation, restantes)
+
+        Si NON placee Alors
+            nouveaux_espaces, sens ← choisir_sens_coupe(conteneur_vide, marchandise, restantes)
+            Ajouter nouveaux_espaces à conteneurs
+            Ajouter [marchandise] à affectation
+        FinSi
+
+    FinPour
+
+    Retourner Longueur(conteneurs), affectation
+
+Fin
+
+Fonction placer_dans_conteneurs(marchandise, conteneurs, affectation, restantes)
+Début
+    Pour chaque conteneur c Faire
+        Pour chaque espace libre de conteneur[c] Faire
+            Si longueur[espace] >= longueur[marchandise] ET largeur[espace] >= largeur[marchandise] Alors
+                nouveaux_espaces, sens ← choisir_sens_coupe(espace, marchandise, restantes)
+                Remplacer espace par nouveaux_espaces dans conteneur[c]
+                Ajouter marchandise à affectation[c]
+                Retourner VRAI
+            FinSi
+        FinPour
+    FinPour
+    Retourner FAUX
+Fin
+
+Fonction choisir_sens_coupe(espace, marchandise, restantes)
+Début
+    Simuler coupe horizontale → espaces_H
+    Simuler coupe verticale  → espaces_V
+
+    score_H ← nombre de restantes pouvant tenir dans espaces_H
+    score_V ← nombre de restantes pouvant tenir dans espaces_V
+
+    Si score_H >= score_V Alors
+        Retourner espaces_H, "horizontal"
+    Sinon
+        Retourner espaces_V, "vertical"
+    FinSi
+Fin
+
+
+
+Algorithme : bin_packing_d3_offline
+
+Variables
+    inventaire en Tableau
+    restantes en Tableau
+    conteneurs en Tableau
+    affectation en Tableau
+
+Début
+
+    // Tri décroissant par (hauteur, largeur, longueur)
+    restantes ← Trier inventaire par (hauteur, largeur, longueur) décroissant
+
+    TantQue restantes non vide Faire
+
+        Pour chaque conteneur c Faire
+            remplir_conteneur(conteneur[c], restantes, affectation[c])
+            Si restantes vide Alors Quitter FinSi
+        FinPour
+
+        Si restantes non vide Alors
+            nouvel_espace ← [(0, 0, 0, CONTENEUR_L, CONTENEUR_l, CONTENEUR_h)]
+            remplir_conteneur(nouvel_espace, restantes, nouvelles_placees)
+            Ajouter nouvel_espace à conteneurs
+            Ajouter nouvelles_placees à affectation
+        FinSi
+
+    FinTantQue
+
+    Retourner Longueur(conteneurs), affectation
+
+Fin
+
+Fonction remplir_conteneur(espaces, restantes, placees)
+Début
+    Pour chaque espace libre Faire
+        marchandise ← meilleure_marchandise(espace, restantes)
+        Si marchandise = None Alors passer à l'espace suivant FinSi
+
+        nouveaux_espaces ← choisir_ordre_coupe(espace, marchandise, restantes)
+        Remplacer espace par nouveaux_espaces
+        Retirer marchandise de restantes
+        Ajouter marchandise à placees
+    FinPour
+Fin
+
+Fonction choisir_ordre_coupe(espace, marchandise, restantes)
+Début
+    meilleur_score ← -1
+
+    // On teste les 6 permutations possibles des axes (x, y, z)
+    Pour chaque permutation (axe1, axe2, axe3) de [x, y, z] Faire
+        nouveaux_espaces ← couper_espace(espace, marchandise, (axe1, axe2, axe3))
+        score ← nombre de restantes pouvant tenir dans nouveaux_espaces
+        Si score > meilleur_score Alors
+            meilleur_score ← score
+            meilleurs_espaces ← nouveaux_espaces
+        FinSi
+    FinPour
+
+    Retourner meilleurs_espaces
+Fin
+
+Fonction meilleure_marchandise(espace, restantes)
+Début
+    candidates ← marchandises rentrant dans le volume de l'espace
+    Si candidates vide Alors Retourner None FinSi
+    Retourner candidate avec (hauteur, largeur, longueur) maximale
+Fin
+
+Algorithme : bin_packing_d3_online
+
+Variables
+    inventaire en Tableau
+    conteneurs en Tableau
+    affectation en Tableau
+    placee en Booléen
+
+Début
+
+    // Pas de tri : traitement dans l'ordre d'arrivée
+    Pour chaque marchandise i de inventaire Faire
+        restantes ← inventaire[i+1 à fin]
+
+        placee ← placer_dans_conteneurs(marchandise, conteneurs, affectation, restantes)
+
+        Si NON placee Alors
+            nouveaux_espaces ← choisir_ordre_coupe(conteneur_vide, marchandise, restantes)
+            Ajouter nouveaux_espaces à conteneurs
+            Ajouter [marchandise] à affectation
+        FinSi
+
+    FinPour
+
+    Retourner Longueur(conteneurs), affectation
+
+Fin
+
+Fonction placer_dans_conteneurs(marchandise, conteneurs, affectation, restantes)
+Début
+    Pour chaque conteneur c Faire
+        Pour chaque espace libre de conteneur[c] Faire
+            Si marchandise rentre dans espace Alors
+                nouveaux_espaces ← choisir_ordre_coupe(espace, marchandise, restantes)
+                Remplacer espace par nouveaux_espaces dans conteneur[c]
+                Ajouter marchandise à affectation[c]
+                Retourner VRAI
+            FinSi
+        FinPour
+    FinPour
+    Retourner FAUX
+Fin
+
+Fonction choisir_ordre_coupe(espace, marchandise, restantes)
+Début
+    meilleur_score ← -1
+
+    Pour chaque permutation (axe1, axe2, axe3) de [x, y, z] Faire
+        nouveaux_espaces ← couper_espace(espace, marchandise, (axe1, axe2, axe3))
+        score ← nombre de restantes pouvant tenir dans nouveaux_espaces
+        Si score > meilleur_score Alors
+            meilleur_score ← score
+            meilleurs_espaces ← nouveaux_espaces
+        FinSi
+    FinPour
+
+    Retourner meilleurs_espaces
+Fin

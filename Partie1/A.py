@@ -98,7 +98,9 @@ def Algo_A(objets_velo, target_kg):
 
 poids = [2,3,4,5]
 
-for poid in poids:
+print("Algorithme A")
+
+for poid in poids:    
 
     print("Pour une capacité de", poid, "kg, les objets suivants sont choisis :")
     
